@@ -1,0 +1,111 @@
+<html>
+  <head>
+    <title>Peach - Parallel Each</title>
+    <style>
+      pre {
+        background-color: #f1f1f3;
+        color: #112;
+        padding: 10px;
+        font-size: 1.1em;
+        overflow: auto;
+        margin: 4px 0px;
+        width: 95%;
+      }
+
+
+
+      /* Syntax highlighting */
+      pre .normal {}
+      pre .comment { color: #005; font-style: italic; }
+      pre .keyword { color: #A00; font-weight: bold; }
+      pre .method { color: #077; }
+      pre .class { color: #074; }
+      pre .module { color: #050; }
+      pre .punct { color: #447; font-weight: bold; }
+      pre .symbol { color: #099; }
+      pre .string { color: #944; background: #FFE; }
+      pre .char { color: #F07; }
+      pre .ident { color: #004; }
+      pre .constant { color: #07F; }
+      pre .regex { color: #B66; background: #FEF; }
+      pre .number { color: #F99; }
+      pre .attribute { color: #5bb; }
+      pre .global { color: #7FB; }
+      pre .expr { color: #227; }
+      pre .escape { color: #277; }
+    </style>
+  </head>
+  <body style="background-color: #ecad27;">
+    <center><div style="border: dotted #000 1px; 
+      background-color: #fff;
+      width: 745px;
+      text-align: left;">
+      <img src="Peach.sketch.png" alt="Peach">
+      <div style ="padding: 0px 20px 20px 20px;">
+	<h1>Parallel Each <small><small>
+	      (for ruby with threads)
+	</small></small></h1>
+	<p>
+	It is pretty common to have iterations over Arrays that can be safely 
+	run in parallel.  With multicore chips becoming pretty common,
+	single threaded processing is about as cool as Pog.  Unfortunately,
+	standard Ruby hates real threads pretty hardcore at the present time;
+	however, for some ruby projects alternate VMs like
+        <a href="http://jruby.codehaus.org/" title="JRuby: Coolest Thing Ever">
+	  JRuby</a> do give multicores some lovin'.  <i>Peach</i> exists to 
+	make this power simple to use with minimal code changes.
+	</p>
+	<p>Functions like <tt>map</tt>, <tt>each</tt>, and <tt>delete_if</tt>
+	are often used in a functional, side-effect free style.  If the
+	operation in the block is computationally intense, performance can 
+	often be gained by multithreading the process. That's where 
+	<i>Peach</i> comes in. In the simplest case, you are one letter away
+	from harnessing the power of parallelism and unlocking the secret of
+	a guilt-free tan.  At this stage, the goggles are purely optional.
+	</p>
+	<h2>Using Peach</h2>
+	<p>Suppose you are going about your day job hacking away at code for
+	the <a href="http://en.wikipedia.org/wiki/WOPR">WOPR</a> when you
+	stumble upon the code:
+	</p>
+	<pre><span class=ident>cities</span><span class=punct>.</span><span class=ident>each</span> <span class=punct>{|</span><span class=ident>city</span><span class=punct>|</span> <span class=ident>thermonuclear_war</span><span class=punct>(</span><span class=ident>city</span><span class=punct>)}</span>
+	</pre>
+	<p>Clearly, the only winning move is to declare war in parallel.  With
+	<i>Peach</i>, the new code is:
+	<pre>
+<span class="ident">require</span> <span class="punct">'</span><span class="string">peach</span><span class="punct">'</span>
+
+<span class=ident>cities</span><span class=punct>.</span><span class=ident>peach</span> <span class=punct>{|</span><span class=ident>city</span><span class=punct>|</span> <span class=ident>thermonuclear_war</span><span class=punct>(</span><span class=ident>city</span><span class=punct>)}</span>
+	</pre>
+	<p>
+	Requiring peach.rb monkey patches Array into submission.
+	Currently <i>Peach</i> provides <tt>peach</tt>, <tt>pmap</tt>, and
+	<tt>pdelete_if</tt>.  Each of these functions takes an optional
+	argument <i>n</i>, which represents the desired number of worker 
+	threads with the default being one thread per Array element.  For
+	cheaper operations on a large number of elements, you probably want
+	to set <i>n</i> to something reasonably low.
+	</p>
+	<pre><span class="punct">(</span><span class="number">0</span><span class="punct">...</span><span class="number">10000</span><span class="punct">).</span><span class="ident">to_a</span><span class="punct">.</span><span class="ident">pmap</span><span class="punct">(</span><span class="number">4</span><span class="punct">)</span> <span class="punct">{|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">process</span><span class="punct">(</span><span class="ident">x</span><span class="punct">)}</span>
+	</pre>
+	<p>
+	Constructing the threads and adding on a few layers of indirection does
+	add a bit of overhead to the iteration especially on MRI. Keep this in
+	mind and remember to benchmark when unsure.
+	<h2>Eat a Peach</h2>
+	<p>
+	<i>Peach</i> is distributed as a single file, <tt>peach.rb</tt>.
+	We don't need no stinking .tar.gz.
+	<ul>
+	  <li>Current Version:
+	  <a href="http://rubyforge.org/frs/?group_id=5932&release_id=20726">
+	  0.1</a></li>
+	  <li>Project Page: <a href="http://rubyforge.org/projects/peach/">
+	    RubyForge</a></li>
+	</ul>
+	</p>
+      </div>
+    </div></center>
+  </body>
+</html>
+
