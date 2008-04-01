@@ -1,5 +1,4 @@
-module Peach
-
+class Array
   def peach(n = nil, &b)
     peachrun(:each, b, n)
   end
@@ -10,17 +9,17 @@ module Peach
     peachrun(:delete_if, b, n)
   end
 
-#  protected
+  protected
   def peachrun(meth, b, n = nil)
-    threads = []
-    results = []
+    threads = results = result = []
     divvy(n).each_with_index do |x,i|
-      threads << Thread.new do
-        results[i] = x.send(meth, &b)    
+      if x.size > 0
+        threads << Thread.new { results[i] = x.send(meth, &b)}
+      else
+        results[i] = []
       end
     end
     threads.each {|t| t.join}
-    result = []
     results.each {|x| result += x}
     result
   end
@@ -35,10 +34,5 @@ module Peach
       offset += div
     end
     lists << slice(offset...size)
-    lists
   end
-end
-
-class Array
-  include Peach
 end
