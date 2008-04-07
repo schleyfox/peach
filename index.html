@@ -44,7 +44,7 @@
       <div style ="padding: 0px 20px 20px 20px;">
 	<h1>Parallel Each <small><small>
 	      (for ruby with threads)
-	</small></small></h1>
+        </small></small></h1>
 	<p>
 	It is pretty common to have iterations over Arrays that can be safely 
 	run in parallel.  With multicore chips becoming pretty common,
@@ -91,7 +91,19 @@
 	<p>
 	Constructing the threads and adding on a few layers of indirection does
 	add a bit of overhead to the iteration especially on MRI. Keep this in
-	mind and remember to benchmark when unsure.
+        mind and remember to benchmark when unsure.
+        <h3>Syntax (without all the words)</h3>
+<pre><span class="ident">require</span> <span class="punct">'</span><span class="string">peach</span><span class="punct">'</span>
+
+<span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">peach</span><span class="punct">{|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">f</span><span class="punct">(</span><span class="ident">x</span><span class="punct">)}</span> <span class="comment">#Spawns 4 threads, =&gt; [1,2,3,4]</span>
+<span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">pmap</span><span class="punct">{|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">f</span><span class="punct">(</span><span class="ident">x</span><span class="punct">)}</span> <span class="comment">#Spawns 4 threads, =&gt; [f(1),f(2),f(3),f(4)]</span>
+<span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">pdelete_if</span><span class="punct">{|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">x</span> <span class="punct">&gt;</span> <span class="number">2</span><span class="punct">}</span> <span class="comment">#Spawns 4 threads, =&gt; [3,4]</span>
+
+
+<span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">peach</span><span class="punct">(</span><span class="number">2</span><span class="punct">){|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">f</span><span class="punct">(</span><span class="ident">x</span><span class="punct">)}</span> <span class="comment">#Spawns 2 threads, =&gt; [1,2,3,4]</span>
+<span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">pmap</span><span class="punct">(</span><span class="number">2</span><span class="punct">){|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">f</span><span class="punct">(</span><span class="ident">x</span><span class="punct">)}</span> <span class="comment">#Spawns 2 threads, =&gt; [f(1),f(2),f(3),f(4)]</span>
+<span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">pdelete_if</span><span class="punct">(</span><span class="number">2</span><span class="punct">){|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">x</span> <span class="punct">&gt;</span> <span class="number">2</span><span class="punct">}</span> <span class="comment">#Spawns 2 threads, =&gt; [3,4]</span>
+</pre>
 	<h2>Eat a Peach</h2>
 	<p>
 	<i>Peach</i> is distributed as a single file, <tt>peach.rb</tt>.
