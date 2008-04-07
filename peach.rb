@@ -11,9 +11,7 @@ class Array
 
   protected
   def peachrun(meth, b, n = nil)
-    threads = []
-    results = []
-    result = []
+    threads, results, result = [],[],[]
     divvy(n).each_with_index do |x,i|
       if x.size > 0
         threads << Thread.new { results[i] = x.send(meth, &b)}
