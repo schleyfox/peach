@@ -20,7 +20,7 @@ class Array
       end
     end
     threads.each {|t| t.join }
-    results.each {|x| result += x}
+    results.each {|x| result += x if x}
     result
   end
   

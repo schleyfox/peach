@@ -30,9 +30,10 @@ puts "map:"
 links1 = []
 puts Benchmark.measure {
   links1 = articles.map do |article|
-    article.scan(/\[\[[\w -']+?\]\]/m).each do |link|
-      Digest::MD5.hexdigest(link)
-    end
+    article.scan(/\[\[[\w -']+?\]\]/m)
+    #.each do |link|
+    #  Digest::MD5.hexdigest(link)
+    #end
   end
 }
 puts "Found #{links1.flatten.size} links"
@@ -41,9 +42,10 @@ puts "pmap:"
 links2 = []
 puts Benchmark.measure {
   links2 = articles.pmap(6) do |article|
-    article.scan(/\[\[[\w -']+?\]\]/m).each do |link| 
-      Digest::MD5.hexdigest(link)
-    end
+    article.scan(/\[\[[\w -']+?\]\]/m)
+    #.each do |link| 
+    #  Digest::MD5.hexdigest(link)
+    #end
   end
 }
 puts "Found #{links2.flatten.size} links"
