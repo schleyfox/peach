@@ -25,7 +25,7 @@ class Array
   end
   
   def divvy(n = nil)
-    n ||= size
+    n ||= $peach_default_threads || size
     lists = []
     div = (size/n).floor
     offset = 0

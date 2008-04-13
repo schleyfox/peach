@@ -28,18 +28,21 @@ puts "BEGIN REAL BENCHMARK"
 puts
 puts "map:"
 links1 = []
+for i in (1...5)
 puts Benchmark.measure {
   links1 = articles.map do |article|
     article.scan(/\[\[[\w -']+?\]\]/m)
     #.each do |link|
-    #  Digest::MD5.hexdigest(link)
+    #  Digest::MD5.hexdigest(article)
     #end
   end
 }
+end
 puts "Found #{links1.flatten.size} links"
 puts
 puts "pmap:"
 links2 = []
+for i in (1...5)
 puts Benchmark.measure {
   links2 = articles.pmap(6) do |article|
     article.scan(/\[\[[\w -']+?\]\]/m)
@@ -48,7 +51,7 @@ puts Benchmark.measure {
     #end
   end
 }
+end
 puts "Found #{links2.flatten.size} links"
-
 p links2 - links1
 puts "END"

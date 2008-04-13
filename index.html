@@ -104,6 +104,14 @@
 <span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">pmap</span><span class="punct">(</span><span class="number">2</span><span class="punct">){|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">f</span><span class="punct">(</span><span class="ident">x</span><span class="punct">)}</span> <span class="comment">#Spawns 2 threads, =&gt; [f(1),f(2),f(3),f(4)]</span>
 <span class="punct">[</span><span class="number">1</span><span class="punct">,</span><span class="number">2</span><span class="punct">,</span><span class="number">3</span><span class="punct">,</span><span class="number">4</span><span class="punct">].</span><span class="ident">pdelete_if</span><span class="punct">(</span><span class="number">2</span><span class="punct">){|</span><span class="ident">x</span><span class="punct">|</span> <span class="ident">x</span> <span class="punct">&gt;</span> <span class="number">2</span><span class="punct">}</span> <span class="comment">#Spawns 2 threads, =&gt; [3,4]</span>
 </pre>
+        <h2>FAQ</h2>
+        <p><b>Q: I use normal ruby (MRI 1.8 or 1.9), will Peach confer superpowers and great performance upon my code?</b><br/>
+        A: No, on MRI your code will be slightly slower because of the increased overhead for Thread creation.  MRI is singlethreaded so Peach will not make it magically parallel.</p>
+        <p><b>Q: Why should I switch to JRuby to get the benefits of Peach?</b><br/>
+        A: Switching to JRuby for code that needs better performance is a good idea even without Peach.  JRuby is insanely fast and a good idea.  The multithreading and ability to use this humble utility is just another feature.</p>
+        <p><b>Q: Benchmarks?</b><br/>
+        A: I am pretty bad at benchmarking code, but I do have a simple test comparing performance between <tt>map</tt> and <tt>pmap</tt> on MRI and JRuby.  Headius helped in the preparation of these materials.  <a href="http://pastie.caboo.se/177240">Check it out</a>.  JRuby on Java 1.6 is <a href="http://pastie.caboo.se/177263">even faster</a>.  If you come up with any benchmarks, do let me know.</p>
+
 	<h2>Eat a Peach</h2>
 	<p>
 	<i>Peach</i> is distributed as a single file, <tt>peach.rb</tt>.
