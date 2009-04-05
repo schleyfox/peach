@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name = 'peach'
-  s.version = '0.1.2'
-  s.date = '2008-05-06'
+  s.version = '0.2'
+  s.date = '2009-04-05'
   s.authors = ['Ben Hughes']
   s.email = 'ben@pixelmachine.org'
   s.summary = 'Parallel Each and other parallel things'
   s.homepage = 'http://peach.rubyforge.org'
-  s.files = ['README', 'LICENSE', 'lib/peach.rb', 'bn/peach_bn.rb', 'bn/peach_test.rb', 'web/index.html', 'web/Peach.sketch.png']
+  s.files = ['README', 'LICENSE', 'Rakefile', 'lib/peach.rb', 'bn/peach_bn.rb', 'bn/peach_test.rb', 'test/test_helper.rb', 'test/peach_test.rb', 'web/index.html', 'web/Peach.sketch.png']
 end
