@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'peach'
-  s.version = '0.2'
-  s.date = '2009-04-05'
+  s.version = '0.3'
+  s.date = '2009-07-14'
   s.authors = ['Ben Hughes']
   s.email = 'ben@pixelmachine.org'
   s.summary = 'Parallel Each and other parallel things'

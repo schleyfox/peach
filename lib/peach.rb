@@ -1,10 +1,53 @@
 module Peach
   def peach(n = nil, &b)
-    peach_run(:each, b, n)
+    return [] if n == 0 or size == 0
+
+    result = Array.new(size)
+
+    n ||= $peach_default_threads || size
+    div = (size/n).ceil
+
+    return [] if div == 0
+
+    threads = []
+    max = size - 1
+    offset = 0
+    for i in (0..n-1)
+      threads << Thread.new(offset - div, offset > max ? max : offset) do |lower, upper|
+        for j in lower..upper
+          yield(slice(j))
+        end
+      end
+      offset += div
+    end
+    threads.each { |t| t.join }
+    self
   end
 
   def pmap(n = nil, &b)
-    peach_run(:map, b, n)
+    return [] if n == 0
+
+    n ||= $peach_default_threads || size
+    div = (size/n).ceil
+
+    return [] if div == 0
+
+    result = Array.new(size)
+
+    threads = []
+    max = size - 1
+    offset = div
+    for i in (0..n-1)
+      threads << Thread.new(offset - div, offset > max ? max : offset) do |lower, upper|
+        for j in lower..upper
+          result[j] = yield(slice(j))
+        end
+      end
+      offset += div
+    end
+    threads.each { |t| t.join }
+
+    result
   end
 
   def pselect(n = nil, &b)
