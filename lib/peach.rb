@@ -5,7 +5,7 @@ module Peach
     result = Array.new(size)
 
     n ||= $peach_default_threads || size
-    div = (size/n).ceil
+    div = (size.to_f/n).ceil
 
     return [] if div == 0
 
@@ -28,7 +28,7 @@ module Peach
     return [] if n == 0
 
     n ||= $peach_default_threads || size
-    div = (size/n).ceil
+    div = (size.to_f/n).ceil
 
     return [] if div == 0
 
