@@ -2,6 +2,8 @@ require File.join(File.dirname(__FILE__), "test_helper")
 
 require File.join(File.dirname(__FILE__), "..", "lib", "peach")
 
+require 'thread'
+
 class PeachTest < Test::Unit::TestCase
   [:peach, :pmap, :pselect].each do |f|
     context "Parallel function #{f}" do
@@ -14,6 +16,24 @@ class PeachTest < Test::Unit::TestCase
       should "return the same result as #{normal_f}" do
         assert_equal @data.send(normal_f, &@block),
           @data.send(f, nil, &@block)
+      end
+    end
+  end
+
+  [:peach, :pmap, :pselect].each do |f|
+    context "#{f}" do
+      [nil, 101, 99, 51, 49, 20, 5, 1].each do |pool|
+        should "invoke the block exactly once for each array item," +
+          " with thread pool size of #{pool.inspect}" do
+          source_array = (0...100).to_a
+          q = Queue.new()
+          source_array.send(f, pool) {|i| q.push(i)}
+          result_array = []
+          until q.empty?
+            result_array << q.pop
+          end
+          assert_equal source_array, result_array.sort
+        end
       end
     end
   end
@@ -41,12 +61,12 @@ class PeachTest < Test::Unit::TestCase
       end
 
       should "not lose any array elements" do
-        assert_equal @data.size, @data.send(:peach_divvy, 2).inject(0) {|sum, i| 
+        assert_equal @data.size, @data.send(:peach_divvy, 2).inject(0) {|sum, i|
           sum + i.size
         }
       end
     end
-    
+
     context "when n is greater than array size" do
       should "only create 'array size' divisions" do
         assert_equal @data.size, @data.send(:peach_divvy, 42).size
