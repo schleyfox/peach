@@ -1,52 +1,33 @@
 module Peach
-  def peach(n = nil, &b)
-    return [] if n == 0 or size == 0
+  def peach(pool = nil, &b)
+    pool ||= $peach_default_threads || size
+    raise "Thread pool size less than one?" unless pool >= 1
+    div = (size/pool).to_i      # should already be integer
+    div = 1 unless div >= 1     # each thread better do something!
 
-    result = Array.new(size)
-
-    n ||= $peach_default_threads || size
-    div = (size.to_f/n).ceil
-
-    return [] if div == 0
-
-    threads = []
-    max = size - 1
-    offset = 0
-    for i in (0..n-1)
-      threads << Thread.new(offset - div, offset > max ? max : offset) do |lower, upper|
-        for j in lower..upper
-          yield(slice(j))
-        end
+    threads = (0...size).step(div).map do |chunk|
+      Thread.new(chunk, [chunk+div,size].min) do |lower, upper|
+        (lower...upper).each{|j| yield(slice(j))}
       end
-      offset += div
     end
     threads.each { |t| t.join }
     self
   end
 
-  def pmap(n = nil, &b)
-    return [] if n == 0
-
-    n ||= $peach_default_threads || size
-    div = (size.to_f/n).ceil
-
-    return [] if div == 0
+  def pmap(pool = nil, &b)
+    pool ||= $peach_default_threads || size
+    raise "Thread pool size less than one?" unless pool >= 1
+    div = (size/pool).to_i      # should already be integer
+    div = 1 unless div >= 1     # each thread better do something!
 
     result = Array.new(size)
 
-    threads = []
-    max = size - 1
-    offset = div
-    for i in (0..n-1)
-      threads << Thread.new(offset - div, offset > max ? max : offset) do |lower, upper|
-        for j in lower..upper
-          result[j] = yield(slice(j))
-        end
+    threads = (0...size).step(div).map do |chunk|
+      Thread.new(chunk, [chunk+div,size].min) do |lower, upper|
+        (lower...upper).each{|j| result[j] = yield(slice(j))}
       end
-      offset += div
     end
     threads.each { |t| t.join }
-
     result
   end
 
