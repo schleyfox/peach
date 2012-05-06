@@ -1,14 +1,12 @@
 module Peach
   def peach(pool = nil, &b)
-    pool ||= $peach_default_threads || size
+    pool ||= $peach_default_threads || count
     raise "Thread pool size less than one?" unless pool >= 1
-    div = (size/pool).to_i      # should already be integer
+    div = (count/pool).to_i      # should already be integer
     div = 1 unless div >= 1     # each thread better do something!
-
-    threads = (0...size).step(div).map do |chunk|
-      Thread.new(chunk, [chunk+div,size].min) do |lower, upper|
-        (lower...upper).each{|j| yield(slice(j))}
-      end
+    threads = []
+    self.each_slice(div) do |slice|
+      threads << Thread.new(slice){|thread_slice| thread_slice.each{|elt| yield elt}}
     end
     threads.each { |t| t.join }
     self
