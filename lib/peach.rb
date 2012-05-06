@@ -6,7 +6,7 @@ module Peach
     div = 1 unless div >= 1     # each thread better do something!
     
     threads = []
-    self.each_slice(div) do |slice|
+    each_slice(div) do |slice|
       threads << Thread.new(slice){|thread_slice| thread_slice.each{|elt| yield elt}}
     end
     threads.each { |t| t.join }
@@ -22,7 +22,7 @@ module Peach
     result = Array.new(count)
 
     threads = []
-    self.each_slice(div).with_index do |slice, idx|
+    each_slice(div).with_index do |slice, idx|
       threads << Thread.new(slice){|thread_slice| thread_slice.each_with_index{|elt, offset| result[idx+offset] = yield elt}}
     end
     threads.each { |t| t.join }
