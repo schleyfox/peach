@@ -1,13 +1,16 @@
-module Peach
+# monkey patch Enumerable by reopening it. Enumerable.send(:include, Peach) 
+# doesn't seem to work as it should.  
+module Enumerable
   def peach(pool = nil, &b)
-    pool ||= $peach_default_threads || size
+    pool ||= $peach_default_threads || count
     raise "Thread pool size less than one?" unless pool >= 1
-    div = (size/pool).to_i      # should already be integer
+    div = (count/pool).to_i      # should already be integer
     div = 1 unless div >= 1     # each thread better do something!
-
-    threads = (0...size).step(div).map do |chunk|
-      Thread.new(chunk, [chunk+div,size].min) do |lower, upper|
-        (lower...upper).each{|j| yield(slice(j))}
+    
+    threads = []
+    each_slice(div) do |slice|
+      threads << Thread.new(slice) do |thread_slice|
+        thread_slice.each{|elt| yield elt}
       end
     end
     threads.each { |t| t.join }
@@ -15,16 +18,17 @@ module Peach
   end
 
   def pmap(pool = nil, &b)
-    pool ||= $peach_default_threads || size
+    pool ||= $peach_default_threads || count
     raise "Thread pool size less than one?" unless pool >= 1
-    div = (size/pool).to_i      # should already be integer
+    div = (count/pool).to_i      # should already be integer
     div = 1 unless div >= 1     # each thread better do something!
 
-    result = Array.new(size)
+    result = Array.new(count)
 
-    threads = (0...size).step(div).map do |chunk|
-      Thread.new(chunk, [chunk+div,size].min) do |lower, upper|
-        (lower...upper).each{|j| result[j] = yield(slice(j))}
+    threads = []
+    each_slice(div).with_index do |slice, idx|
+      threads << Thread.new(slice) do |thread_slice|
+        thread_slice.each_with_index{|elt, offset| result[idx+offset] = yield elt}
       end
     end
     threads.each { |t| t.join }
@@ -32,39 +36,20 @@ module Peach
   end
 
   def pselect(n = nil, &b)
-    peach_run(:select, b, n)
-  end
-
-
-
-  protected
-  def peach_run(meth, b, n = nil)
+    pool ||= $peach_default_threads || count
+    raise "Thread pool size less than one?" unless pool >= 1
+    div = (count/pool).to_i      # should already be integer
+    div = 1 unless div >= 1     # each thread better do something!
     threads, results, result = [],[],[]
-    peach_divvy(n).each_with_index do |x,i|
-      threads << Thread.new { results[i] = x.send(meth, &b)}
+
+    each_slice(div).with_index do |slice, idx|
+      threads << Thread.new(slice) do |thread_slice|
+        results[idx] = slice.select(&b)
+      end
     end
     threads.each {|t| t.join }
     results.each {|x| result += x if x}
     result
   end
-  
-  def peach_divvy(n = nil)
-    return [] if size == 0
 
-    n ||= $peach_default_threads || size
-    n = size if n > size
-
-    lists = []
-
-    div = (size/n).floor
-    offset = 0
-    for i in (0...n-1)
-      lists << slice(offset, div)
-      offset += div
-    end
-    lists << slice(offset...size)
-    lists
-  end
 end
-
-Array.send(:include, Peach)
