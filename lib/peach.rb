@@ -9,7 +9,9 @@ module Enumerable
     
     threads = []
     each_slice(div) do |slice|
-      threads << Thread.new(slice){|thread_slice| thread_slice.each{|elt| yield elt}}
+      threads << Thread.new(slice) do |thread_slice|
+        thread_slice.each{|elt| yield elt}
+      end
     end
     threads.each { |t| t.join }
     self
@@ -25,7 +27,9 @@ module Enumerable
 
     threads = []
     each_slice(div).with_index do |slice, idx|
-      threads << Thread.new(slice){|thread_slice| thread_slice.each_with_index{|elt, offset| result[idx+offset] = yield elt}}
+      threads << Thread.new(slice) do |thread_slice|
+        thread_slice.each_with_index{|elt, offset| result[idx+offset] = yield elt}
+      end
     end
     threads.each { |t| t.join }
     result
@@ -39,7 +43,9 @@ module Enumerable
     threads, results, result = [],[],[]
 
     each_slice(div).with_index do |slice, idx|
-      threads << Thread.new(slice){|thread_slice| results[idx] = slice.select(&b)}
+      threads << Thread.new(slice) do |thread_slice|
+        results[idx] = slice.select(&b)
+      end
     end
     threads.each {|t| t.join }
     results.each {|x| result += x if x}
