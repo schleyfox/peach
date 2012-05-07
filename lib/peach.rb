@@ -1,5 +1,5 @@
-# monkey patch Enumerable directly. Enumerable.send(:include, Peach) doesn't
-# seem to work as it should.  
+# monkey patch Enumerable by reopening it. Enumerable.send(:include, Peach) 
+# doesn't seem to work as it should.  
 module Enumerable
   def peach(pool = nil, &b)
     pool ||= $peach_default_threads || count
