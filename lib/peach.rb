@@ -1,4 +1,6 @@
-module Peach
+# monkey patch Enumerable directly. Enumerable.send(:include, Peach) doesn't
+# seem to work as it should.  
+module Enumerable
   def peach(pool = nil, &b)
     pool ||= $peach_default_threads || count
     raise "Thread pool size less than one?" unless pool >= 1
@@ -45,5 +47,3 @@ module Peach
   end
 
 end
-
-Array.send(:include, Peach)
