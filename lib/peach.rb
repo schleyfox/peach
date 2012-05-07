@@ -30,7 +30,18 @@ module Peach
   end
 
   def pselect(n = nil, &b)
-    peach_run(:select, b, n)
+    pool ||= $peach_default_threads || count
+    raise "Thread pool size less than one?" unless pool >= 1
+    div = (count/pool).to_i      # should already be integer
+    div = 1 unless div >= 1     # each thread better do something!
+    threads, results, result = [],[],[]
+
+    each_slice(div).with_index do |slice, idx|
+      threads << Thread.new(slice){|thread_slice| results[idx] = slice.select(&b)}
+    end
+    threads.each {|t| t.join }
+    results.each {|x| result += x if x}
+    result
   end
 
 
