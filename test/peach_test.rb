@@ -10,12 +10,12 @@ class PeachTest < Test::Unit::TestCase
       normal_f = f.to_s[1..-1].to_sym
 
       setup do
-        @data = [1, 2, 3, 5, 8]
+        @data = [1, 2, 3, 5, 8]*10001
         @block = lambda{|i| i**2}
       end
       should "return the same result as #{normal_f}" do
         assert_equal @data.send(normal_f, &@block),
-          @data.send(f, nil, &@block)
+          @data.send(f, 100, &@block)
       end
     end
   end
