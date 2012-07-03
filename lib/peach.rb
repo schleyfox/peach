@@ -1,16 +1,9 @@
 # monkey patch Enumerable by reopening it. Enumerable.send(:include, Peach) 
 # doesn't seem to work as it should.  
-module Peach
-  class EmptyThreadPoolError < RuntimeError
-  end
-end
-
 module Enumerable
   def _peach_run(pool = nil, &b)
     pool ||= $peach_default_threads || count
-    unless pool >= 1
-      raise Peach::EmptyThreadPoolError, "Thread pool size less than one"
-    end
+    pool = 1 unless pool >= 1
     div = (count/pool).to_i # should already be integer
     div = 1 unless div >= 1 # each thread better do something!
 
