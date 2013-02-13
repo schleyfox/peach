@@ -52,3 +52,27 @@ module Enumerable
     result
   end
 end
+
+class File
+  def _peach_run(pool = nil, &b)
+    pool ||= $peach_default_threads || count
+    pool = 1 unless pool >= 1
+    div = (count/pool).to_i # should already be integer
+    div = 1 unless div >= 1 # each thread better do something!
+
+    threads = []
+    each_slice(div).with_index do |slice, idx|
+      threads << Thread.new(slice) do |thread_slice|
+        yield thread_slice, idx, div
+      end
+    end
+    threads.each{|t| t.join }
+    self
+  end
+
+  def peach_line(pool = nil, &b)
+    _peach_run(pool) do |thread_slice, idx, div|
+      thread_slice.each{|elt| yield elt}
+    end
+  end
+end
