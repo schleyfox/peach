@@ -43,4 +43,18 @@ class PeachTest < Test::Unit::TestCase
     end
   end
 
+  [:peach_line].each do |f|
+    context "#{f}" do
+      normal_f = f.to_s[1..-1].to_sym
+
+      setup do
+        @data = File.open(File.join(File.dirname(__FILE__), 'data.txt'), 'r')
+        @block = lambda{|i| i.to_i**2}
+      end
+      should "return the same result as #{normal_f}" do
+        assert_equal @data.send(normal_f, &@block),
+          @data.send(f, 100, &@block)
+      end
+    end
+  end
 end
