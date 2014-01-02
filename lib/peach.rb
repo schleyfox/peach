@@ -39,7 +39,7 @@ module Enumerable
   end
 
   def pselect(pool = nil, &b)
-    results, result = [],[]
+    results = []
     lock = Mutex.new
 
     _peach_run(pool) do |thread_slice, idx, div|
@@ -48,7 +48,14 @@ module Enumerable
         results[idx] = local_result
       end
     end
-    results.each {|x| result += x if x}
-    result
+    results.reduce([]) {|result, x| result += x if x}
+  end
+end
+
+class Hash
+  alias_method :_pselect, :pselect
+
+  def pselect(pool = nil, &b)
+    Hash[_pselect(pool, &b)]
   end
 end
