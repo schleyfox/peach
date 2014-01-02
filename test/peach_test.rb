@@ -43,4 +43,23 @@ class PeachTest < Test::Unit::TestCase
     end
   end
 
+  [:peach, :pmap, :pselect].each do |f|
+    context "Parallel function Hash##{f}" do
+      normal_f = f.to_s[1..-1].to_sym
+
+      setup do
+        @data = ([1, 2, 3, 5, 8]*1001).each_with_object({}){|n, out| out[n] = n}
+        @block = lambda{|k,v| v**2}
+      end
+      should "return the same result as Hash##{normal_f}" do
+        assert_equal @data.send(normal_f, &@block),
+                     @data.send(f, 100, &@block)
+      end
+
+      should "return the same result as Hash##{normal_f} when empty" do
+        assert_equal Hash.new.send(normal_f, &@block),
+                     Hash.new.send(f, nil, &@block)
+      end
+    end
+  end
 end
