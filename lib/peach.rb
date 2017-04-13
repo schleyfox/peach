@@ -4,8 +4,7 @@ module Enumerable
   def _peach_run(pool = nil, &b)
     pool ||= $peach_default_threads || count
     pool = 1 unless pool >= 1
-    div = (count/pool).to_i # should already be integer
-    div = 1 unless div >= 1 # each thread better do something!
+    div = 1 + (count/pool).to_i
 
     threads = []
     each_slice(div).with_index do |slice, idx|
