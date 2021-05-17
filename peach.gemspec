@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = ['Ben Hughes']
   s.email = 'ben@pixelmachine.org'
   s.summary = 'Parallel Each and other parallel things'
-  s.homepage = 'http://peach.rubyforge.org'
+  s.homepage = 'https://github.com/schleyfox/peach'
   
   s.files = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
